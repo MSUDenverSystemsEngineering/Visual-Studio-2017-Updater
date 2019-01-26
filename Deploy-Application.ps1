@@ -135,11 +135,11 @@ Try {
 		If (Test-Path -Path "${envProgramFilesX86}\Microsoft Visual Studio\2017\Professional" -PathType 'Container') {
 			Write-Log -Message "Updating Visual Studio 2017 Professional..." -Severity 1 -Source $deployAppScriptFriendlyName
 			## Silently update the Visual Studio installer if we detect Visual Studio 2017 Professional
-			$exitCode = Execute-Process -Path "vs_professional.exe" -Parameters "--quiet --update" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
-			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
+			# $exitCode = Execute-Process -Path "vs_professional.exe" -Parameters "--quiet --update" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
+			# If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 
 			## Update the Visual Studio 2017 installation silently
-			$exitCode = Execute-Process -Path "vs_professional.exe"  -Parameters "update --installPath `"${envProgramFilesX86}\Microsoft Visual Studio\2017\Professional`" --quiet --wait --norestart" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
+			$exitCode = Execute-Process -Path "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe"  -Parameters "update --quiet --norestart --installpath "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional"" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
 			If (($exitCode.ExitCode -ne "0") -and ($mainExitCode -ne "3010")) { $mainExitCode = $exitCode.ExitCode }
 		} Else {
 			Write-Log -Message "Visual Studio 2017 Professional was not detected." -Severity 2 -Source $deployAppScriptFriendlyName
@@ -151,7 +151,8 @@ Try {
 		[string]$installPhase = 'Post-Installation'
 
 		## <Perform Post-Installation tasks here>
-
+		## Reauthorize installs with product key
+		Execute-Process -Path "${envProgramFilesX86}\Microsoft Visual Studio\2017\Professional\Common7\IDE\StorePID.exe" -Parameters "XXXXXXXXXLOLXXXXXXXXX 08862" -WindowStyle "Hidden" -WaitForMsiExec -PassThru
 		## Display a message at the end of the install
 		If (-not $useDefaultMsi) {}
 	}
